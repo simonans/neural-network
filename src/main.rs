@@ -1,15 +1,10 @@
+mod nn;
+mod utils;
+use nn::{NeuralNetwork, ReLuNetwork, L1};
+use utils::{MNIST_Data, get_mnist_data};
+
 use nalgebra::DVector;
 use std::error::Error;
-
-use crate::{data_loader::{MNIST_Data, get_mnist_data}, neural_network::NeuralNetwork, regularization::{L1, L2}, relu_network::ReLuNetwork};
-
-mod network_architecture;
-mod regularization;
-mod sigmoid_network;
-mod relu_network;
-mod neural_network;
-mod data_loader;
-mod convolution_layer;
 
 fn main()-> Result<(), Box<dyn Error>> {
     let mut training_data: Vec<(DVector<f64>, DVector<f64>)> = Vec::new();

@@ -1,8 +1,11 @@
 use nalgebra::{DMatrix, DVector};
 use rand::{rng, seq::SliceRandom, Rng};
 use std::{iter::zip, marker::PhantomData};
-use crate::network_architecture::{Parameters, NetworkArchitecture};
-use crate::regularization::{Regularization};
+
+use super::network_architecture::{Parameters, NetworkArchitecture};
+use super::regularization::{Regularization};
+
+use crate::utils::argmax;
 
 pub struct NeuralNetwork<T: NetworkArchitecture, R: Regularization> {
     parameters: Parameters,
@@ -153,12 +156,3 @@ impl<T: NetworkArchitecture, R: Regularization> NeuralNetwork<T, R> {
 
 }
 
-fn argmax(vec: DVector<f64>) -> usize {
-    let mut max = 0;
-    for n in  0..vec.len() {
-        if vec[n] > vec[max] {
-            max = n;
-        }
-    }
-    max
-}

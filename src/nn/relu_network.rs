@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
 use nalgebra::DVector;
-use crate::network_architecture::{Parameters, NetworkArchitecture};
+use super::network_architecture::{Parameters, NetworkArchitecture};
+use crate::utils::{relu, softmax};
 pub struct ReLuNetwork {}
 
 impl NetworkArchitecture for ReLuNetwork {
@@ -35,12 +36,3 @@ impl NetworkArchitecture for ReLuNetwork {
     }
 }
 
-fn softmax(vec: &DVector<f64>) -> DVector<f64>{
-    let denominator = vec.iter().fold(0.0, |acc, x| acc + x.exp());
-    DVector::from_iterator(vec.len(), vec.iter()
-                                                    .map(|x| x.exp() / denominator))
-}
-
-fn relu(vec: &DVector<f64>) -> DVector<f64> {
-    DVector::from_iterator(vec.len(), vec.iter().map(|x| x.max(0.0)))
-}

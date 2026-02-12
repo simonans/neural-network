@@ -2,7 +2,8 @@
 
 use nalgebra::DVector;
 use std::iter::zip;
-use crate::network_architecture::{Parameters, NetworkArchitecture};
+use super::network_architecture::{Parameters, NetworkArchitecture};
+use crate::utils::sigmoid;
 
 pub struct SigmoidNetwork {}
 
@@ -34,7 +35,3 @@ impl NetworkArchitecture for SigmoidNetwork {
 }
 
 
-fn sigmoid(z: &DVector<f64>) -> DVector<f64> {
-    let ret = z.map(|x| 1f64 / (1f64 + (-x).exp()));
-    ret
-}
