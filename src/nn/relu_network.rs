@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
-use nalgebra::DVector;
-use super::network_architecture::{Parameters, NetworkArchitecture};
+use super::network_architecture::{NetworkArchitecture, Parameters};
 use crate::utils::{relu, softmax};
+use nalgebra::DVector;
 pub struct ReLuNetwork {}
 
 impl NetworkArchitecture for ReLuNetwork {
@@ -14,10 +14,12 @@ impl NetworkArchitecture for ReLuNetwork {
         softmax(&(&p.weights[last] * &a + &p.biases[last]))
     }
 
-    fn training_feedforward(p: &Parameters, 
-                    activation: &mut DVector<f64>, 
-                    activations: &mut Vec<DVector<f64>>, 
-                    zs: &mut Vec<DVector<f64>>) {
+    fn training_feedforward(
+        p: &Parameters,
+        activation: &mut DVector<f64>,
+        activations: &mut Vec<DVector<f64>>,
+        zs: &mut Vec<DVector<f64>>,
+    ) {
         let last = p.weights.len() - 1;
         for n in 0..last {
             let z = &p.weights[n] * &*activation + &p.biases[n];
@@ -32,7 +34,6 @@ impl NetworkArchitecture for ReLuNetwork {
     }
 
     fn get_derivative(z: &DVector<f64>) -> DVector<f64> {
-        DVector::from_iterator(z.len(), z.iter().map(|x|if *x < 0.0 {0.0} else {1.0}))
+        DVector::from_iterator(z.len(), z.iter().map(|x| if *x < 0.0 { 0.0 } else { 1.0 }))
     }
 }
-

@@ -5,10 +5,9 @@ pub fn sigmoid(z: &DVector<f64>) -> DVector<f64> {
     ret
 }
 
-pub fn softmax(vec: &DVector<f64>) -> DVector<f64>{
+pub fn softmax(vec: &DVector<f64>) -> DVector<f64> {
     let denominator = vec.iter().fold(0.0, |acc, x| acc + x.exp());
-    DVector::from_iterator(vec.len(), vec.iter()
-                                                    .map(|x| x.exp() / denominator))
+    DVector::from_iterator(vec.len(), vec.iter().map(|x| x.exp() / denominator))
 }
 
 pub fn relu(vec: &DVector<f64>) -> DVector<f64> {
@@ -17,7 +16,7 @@ pub fn relu(vec: &DVector<f64>) -> DVector<f64> {
 
 pub fn argmax(vec: DVector<f64>) -> usize {
     let mut max = 0;
-    for n in  0..vec.len() {
+    for n in 0..vec.len() {
         if vec[n] > vec[max] {
             max = n;
         }

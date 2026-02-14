@@ -1,14 +1,18 @@
 #![allow(non_camel_case_types)]
 
-use std::{error::Error, fs::File, io::{BufReader, Read}};
-use nalgebra::{DMatrix, DVector, SimdValue};
 use csv;
+use nalgebra::{DMatrix, DVector, SimdValue};
+use std::{
+    error::Error,
+    fs::File,
+    io::{BufReader, Read},
+};
 
 //use crate::convolution_layer::FeatureMap;
 
 pub enum MNIST_Data<'a> {
     Training(&'a mut Vec<(DVector<f64>, DVector<f64>)>),
-    Test(&'a mut Vec<(DVector<f64>, usize)>)
+    Test(&'a mut Vec<(DVector<f64>, usize)>),
 }
 
 //pub enum Cifar_Data<'a> {
@@ -26,22 +30,27 @@ pub fn get_mnist_data(path: &str, data: &mut MNIST_Data) -> Result<(), Box<dyn E
                 let mut tmp = DVector::<f64>::zeros(10);
                 tmp[row[0].parse::<usize>().unwrap()] = 1f64;
 
-                d.push((DVector::<f64>::from_vec(row
-                                .iter()
-                                .skip(1)
-                                .map(|c| c.parse::<f64>().unwrap() / 127.5 - 1.0 )
-                                .collect()), 
-                        tmp));
-               
+                d.push((
+                    DVector::<f64>::from_vec(
+                        row.iter()
+                            .skip(1)
+                            .map(|c| c.parse::<f64>().unwrap() / 127.5 - 1.0)
+                            .collect(),
+                    ),
+                    tmp,
+                ));
             }
 
             MNIST_Data::Test(d) => {
-                d.push((DVector::<f64>::from_vec(row
-                                .iter()
-                                .skip(1)
-                                .map(|c| c.parse::<f64>().unwrap() / 127.5 - 1.0 )
-                                .collect()), 
-                row[0].parse().unwrap()));
+                d.push((
+                    DVector::<f64>::from_vec(
+                        row.iter()
+                            .skip(1)
+                            .map(|c| c.parse::<f64>().unwrap() / 127.5 - 1.0)
+                            .collect(),
+                    ),
+                    row[0].parse().unwrap(),
+                ));
             }
         }
     }
