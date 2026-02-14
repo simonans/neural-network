@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use super::network_architecture::{NetworkArchitecture, Parameters};
-use crate::utils::{relu, softmax};
+use crate::utils::{relu_vec, softmax};
 use nalgebra::DVector;
 pub struct ReLuNetwork {}
 
@@ -9,7 +9,7 @@ impl NetworkArchitecture for ReLuNetwork {
     fn feedforward(p: &Parameters, mut a: DVector<f64>) -> DVector<f64> {
         let last = p.weights.len() - 1;
         for n in 0..last {
-            a = relu(&(&p.weights[n] * &a + &p.biases[n]));
+            a = relu_vec(&(&p.weights[n] * &a + &p.biases[n]));
         }
         softmax(&(&p.weights[last] * &a + &p.biases[last]))
     }
@@ -23,7 +23,7 @@ impl NetworkArchitecture for ReLuNetwork {
         let last = p.weights.len() - 1;
         for n in 0..last {
             let z = &p.weights[n] * &*activation + &p.biases[n];
-            *activation = relu(&z);
+            *activation = relu_vec(&z);
             zs.push(z);
             activations.push(activation.clone());
         }

@@ -8,7 +8,7 @@ use std::{
     io::{BufReader, Read},
 };
 
-//use crate::convolution_layer::FeatureMap;
+//use crate::convolution_layer::Tensor;
 
 pub enum MNIST_Data<'a> {
     Training(&'a mut Vec<(DVector<f64>, DVector<f64>)>),
@@ -16,8 +16,8 @@ pub enum MNIST_Data<'a> {
 }
 
 //pub enum Cifar_Data<'a> {
-//    Training(&'a mut Vec<(FeatureMap, DVector<f64>)>),
-//    Test(&'a mut Vec<(FeatureMap, usize)>)
+//    Training(&'a mut Vec<(Tensor, DVector<f64>)>),
+//    Test(&'a mut Vec<(Tensor, usize)>)
 //}
 
 pub fn get_mnist_data(path: &str, data: &mut MNIST_Data) -> Result<(), Box<dyn Error>> {
@@ -89,7 +89,7 @@ pub fn get_mnist_data(path: &str, data: &mut MNIST_Data) -> Result<(), Box<dyn E
 //    }
 //}
 //
-//fn extract_colors(buf: &Vec<u8>) -> FeatureMap {
+//fn extract_colors(buf: &Vec<u8>) -> Tensor {
 //    let converted: Vec<f64> = buf.iter().map(|x| *x as f64).collect();
 //    let mut colors = Vec::new();
 //    for n in 0..3 {
@@ -97,5 +97,5 @@ pub fn get_mnist_data(path: &str, data: &mut MNIST_Data) -> Result<(), Box<dyn E
 //        let channel = &converted[start..start+1024];
 //        colors.push(DMatrix::from_row_slice(32, 32, channel));
 //    }
-//    FeatureMap::new(colors)
+//    Tensor::new(colors)
 //}

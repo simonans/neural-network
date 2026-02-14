@@ -1,4 +1,4 @@
-use nalgebra::DVector;
+use nalgebra::{DMatrix, DVector};
 
 pub fn sigmoid(z: &DVector<f64>) -> DVector<f64> {
     let ret = z.map(|x| 1f64 / (1f64 + (-x).exp()));
@@ -10,8 +10,12 @@ pub fn softmax(vec: &DVector<f64>) -> DVector<f64> {
     DVector::from_iterator(vec.len(), vec.iter().map(|x| x.exp() / denominator))
 }
 
-pub fn relu(vec: &DVector<f64>) -> DVector<f64> {
+pub fn relu_vec(vec: &DVector<f64>) -> DVector<f64> {
     DVector::from_iterator(vec.len(), vec.iter().map(|x| x.max(0.0)))
+}
+
+pub fn relu_matrix(input: &mut DMatrix<f64>) {
+    input.apply(|x| *x = x.max(0.0))
 }
 
 pub fn argmax(vec: DVector<f64>) -> usize {
