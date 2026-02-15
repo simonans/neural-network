@@ -7,7 +7,6 @@ use utils::{MNIST_Data, get_mnist_data};
 use nalgebra::{DMatrix, DVector};
 use std::error::Error;
 
-
 pub fn max_pooling(input: &DMatrix<f64>) -> DMatrix<f64> {
     let (rows, cols) = input.shape();
     assert!(rows % 2 == 0);
@@ -35,21 +34,19 @@ fn max(v1: f64, v2: f64, v3: f64, v4: f64) -> f64 {
     v1.max(v2).max(v3).max(v4)
 }
 
-
 fn main() {
-    let dm = DMatrix::from_row_slice(4, 4, &[
-    1.0, 0.0, 0.0, 3.0,
-    0.0, 1.0, 0.0, 2.0,
-    0.0, 0.0, -1.0, -3.5,
-    0.0, 0.0, -4.0, -4.5
-]);
-
-
+    let dm = DMatrix::from_row_slice(
+        4,
+        4,
+        &[
+            1.0, 0.0, 0.0, 3.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, -1.0, -3.5, 0.0, 0.0, -4.0, -4.5,
+        ],
+    );
 
     println!("{}", max_pooling(&dm));
 }
 
-/* 
+/*
 fn main() -> Result<(), Box<dyn Error>> {
     let mut training_data: Vec<(DVector<f64>, DVector<f64>)> = Vec::new();
     get_mnist_data(
