@@ -58,7 +58,8 @@ impl<T: NetworkArchitecture, R: Regularization> FullyConnectedLayer<T, R> {
         &self,
         x: &DVector<f64>,
         y: &DVector<f64>,
-    ) -> (Vec<DVector<f64>>, Vec<DMatrix<f64>>) {
+    ) -> (Vec<DVector<f64>>, Vec<DMatrix<f64>>, DVector<f64>) {
+        //nabla_b, nabla_w, delta
         let mut nabla_b = Vec::new();
         for bias_vector in &self.parameters.biases {
             nabla_b.push(DVector::<f64>::zeros(bias_vector.len()));
@@ -92,7 +93,9 @@ impl<T: NetworkArchitecture, R: Regularization> FullyConnectedLayer<T, R> {
             nabla_b[n] = delta.clone();
             nabla_w[n] = &delta * &activations.pop().unwrap().transpose();
         }
-        (nabla_b, nabla_w)
+
+        delta = &self.parameters.weights[0].transpose() * &delta;
+        (nabla_b, nabla_w, delta)
     }
 
     pub fn update_parameters(

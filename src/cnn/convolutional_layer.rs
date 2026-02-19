@@ -29,6 +29,12 @@ impl TrainingCache {
             pooling_indizes: Vec::new(),
         }
     }
+
+    fn clear(&mut self) {
+        self.activation.data.clear();
+        self.z.data.clear();
+        self.pooling_indizes.clear();
+    }
 }
 
 pub struct ConvoultionalLayer {
@@ -36,7 +42,7 @@ pub struct ConvoultionalLayer {
     biases: Vec<f64>,
     training_cache: TrainingCache,
     learning_rate: f64,
-    output_size: usize,
+    pub output_size: usize,
 }
 
 impl ConvoultionalLayer {
@@ -48,7 +54,7 @@ impl ConvoultionalLayer {
     ) -> Self {
         let mut filters = Vec::new();
         let mut biases = Vec::new();
-        let scale = 2 / (2 * FILTER_SIZE * number_of_input_channels as usize);
+        let scale: f64 = 2.0 / (2.0 * FILTER_SIZE as f64 * number_of_input_channels as f64);
         let mut rng = rand::rng();
         for _ in 0..number_of_filters {
             let mut t = Vec::new();
@@ -67,7 +73,7 @@ impl ConvoultionalLayer {
             biases,
             training_cache: TrainingCache::new(),
             learning_rate,
-            output_size: input_size - FILTER_SIZE + 1 + POOLING_SIZE,
+            output_size: (input_size - FILTER_SIZE + 1) / POOLING_SIZE,
         }
     }
 
@@ -84,7 +90,9 @@ impl ConvoultionalLayer {
         Tensor::new(feature_maps)
     }
 
-    pub fn training_feedforward(&mut self, input: Tensor) -> Tensor {
+    pub fn training_feedforward(&mut self, input: &Tensor) -> Tensor {
+        self.training_cache.clear();
+
         let mut feature_maps = Vec::new();
         let mut cached_maps = Vec::new();
 
@@ -111,7 +119,7 @@ impl ConvoultionalLayer {
         //Max Pooling Rückwärts
         let mut delta = Tensor {
             data: vec![
-                DMatrix::<f64>::zeros(self.output_size, self.output_size);
+                DMatrix::<f64>::zeros(self.output_size * POOLING_SIZE, self.output_size * POOLING_SIZE);
                 back_input.data.len()
             ],
         };
@@ -126,7 +134,7 @@ impl ConvoultionalLayer {
         }
 
         let derivative = relu_derivative(&self.training_cache.z);
-
+        
         for (delta_layer, derivative_layer) in zip(&delta.data, &derivative.data) {
             let d = delta_layer.component_mul(derivative_layer);
             nabla_b.push(d.iter().sum());
@@ -134,25 +142,21 @@ impl ConvoultionalLayer {
             for channel in &self.training_cache.activation.data {
                 data.push(matrix_convolution(channel, &d));
             }
+
             nabla_w.push(Tensor { data });
         }
         (nabla_b, nabla_w)
     }
 
-    fn update_parameters(
-        &mut self,
-        nabla_w: &[Tensor],
-        nabla_b: &[f64],
-        mini_batch_size: f64,
-    ) {
+    pub fn update_parameters(&mut self, nabla_w: &[Tensor], nabla_b: &[f64], mini_batch_size: f64) {
         let mini_batch_learning_rate = self.learning_rate / mini_batch_size;
 
         for (w, nw) in zip(&mut self.filters, nabla_w) {
-            w.learning(mini_batch_learning_rate,nw);
+            w.learning(mini_batch_learning_rate, nw);
         }
 
         for (b, nb) in zip(&mut self.biases, nabla_b) {
-            *b -= mini_batch_learning_rate * nb; 
+            *b -= mini_batch_learning_rate * nb;
         }
     }
 

@@ -122,11 +122,10 @@ pub fn relu_derivative(input: &Tensor) -> Tensor {
     let mut data = Vec::new();
     for m in &input.data {
         data.push(DMatrix::from_iterator(
-            m.len(),
-            m.len(),
+            m.nrows(),
+            m.ncols(),
             m.iter().map(|x| if *x < 0.0 { 0.0 } else { 1.0 }),
         ));
     }
     Tensor { data }
 }
-

@@ -52,11 +52,11 @@ impl<T: NetworkArchitecture, R: Regularization> NeuralNetwork<T, R> {
 
         //Alle Datensätze im mini_batch
         for (x, y) in mini_batch {
-            let (delta_nabla_b, delta_nabla_w) = self.layer.backpropagation(x, y);
+            let (delta_nabla_b, delta_nabla_w, _) = self.layer.backpropagation(x, y);
             for (nb, dnb) in zip(&mut nabla_b, &delta_nabla_b) {
                 *nb += dnb;
             }
-            for (nw, dnw) in zip(&mut nabla_w, delta_nabla_w) {
+            for (nw, dnw) in zip(&mut nabla_w, &delta_nabla_w) {
                 *nw += dnw;
             }
         }
